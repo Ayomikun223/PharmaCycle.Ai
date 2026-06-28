@@ -8,6 +8,6 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
-};
+};  // go
 
 export default nextConfig;
