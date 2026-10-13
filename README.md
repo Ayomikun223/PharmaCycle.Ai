@@ -93,19 +93,32 @@ By facilitating the secure exchange and redistribution of near-expiry inventory,
 
 ### 2. Frontend Configuration
 
-1. Return to the root folder:
+1. Navigate to the frontend directory:
    ```bash
-   cd ..
+   cd pharmaexchange-frontend
    ```
 2. Install dependencies:
    ```bash
    npm install
    ```
-3. Start Next.js client development server:
+3. (Optional) Configure environment variables:
+   ```bash
+   cp .env.example .env.local
+   ```
+4. Start Next.js client development server:
    ```bash
    npm run dev
    ```
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+### 💡 Monorepo Commands (From Root)
+
+You can also run both projects directly from the workspace root:
+- Install all: `npm run install:all`
+- Start frontend: `npm run dev:frontend`
+- Start backend: `npm run dev:backend`
 
 ---
 

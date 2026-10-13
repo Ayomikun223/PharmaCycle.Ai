@@ -1,33 +1,18 @@
 {
-  "name": "pharmahacks",
-  "version": "0.1.0",
+  "name": "pharmacycle-ai",
+  "version": "1.0.0",
   "private": true,
+  "description": "PharmaCycle.AI — Nigerian Pharmaceutical Redistribution Platform",
+  "workspaces": [
+    "pharmaexchange-frontend",
+    "pharmaexchange-backend"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "@hugeicons/core-free-icons": "^4.2.1",
-    "@hugeicons/react": "^1.1.7",
-    "html5-qrcode": "^2.3.8",
-    "next": "16.2.9",
-    "postcss": "^8.5.15",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "tesseract.js": "^7.0.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/container-queries": "^0.1.1",
-    "@tailwindcss/forms": "^0.5.11",
-    "@tailwindcss/postcss": "^4.3.1",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.9",
-    "tailwindcss": "^4.3.1",
-    "typescript": "^5"
+    "dev:frontend": "npm run dev --prefix pharmaexchange-frontend",
+    "dev:backend": "npm run dev --prefix pharmaexchange-backend",
+    "build:frontend": "npm run build --prefix pharmaexchange-frontend",
+    "start:frontend": "npm run start --prefix pharmaexchange-frontend",
+    "start:backend": "npm run start --prefix pharmaexchange-backend",
+    "install:all": "npm install --prefix pharmaexchange-frontend && npm install --prefix pharmaexchange-backend"
   }
 }
