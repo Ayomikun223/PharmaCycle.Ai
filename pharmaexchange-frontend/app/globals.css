@@ -2,6 +2,7 @@
 
 @source "../app/**/*.{js,ts,jsx,tsx,mdx}";
 @source "../components/**/*.{js,ts,jsx,tsx,mdx}";
+@source "../contexts/**/*.{js,ts,jsx,tsx,mdx}";
 
 @theme {
   --color-primary: #2a06f1;

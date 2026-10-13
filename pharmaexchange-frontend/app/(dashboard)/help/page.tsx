@@ -4,15 +4,15 @@ import AppIcon from "@/components/ui/AppIcon";
 const faqs = [
   {
     q: "How do I list medicines for transfer?",
-    a: "Go to Transfers → Offer Medicines, or use the Quick Actions on your dashboard. Select the medicines, set a discount, and they'll be visible to partner pharmacies.",
+    a: "Go to Transfers → Offer Medicines, or use the Quick Actions on your dashboard. Select the medicines, set a discount, and they'll be visible to active pharmacies across the network.",
   },
   {
     q: "What happens when a medicine is near expiry?",
     a: "Our AI flags items expiring within 30 days. You'll get alerts and can list them for transfer at a discount to prevent waste.",
   },
   {
-    q: "How are partner pharmacies verified?",
-    a: "All pharmacies on PharmaCycle.AI are verified through PCN license checks. Look for the green verified badge on partner profiles.",
+    q: "How are pharmacies on the network verified?",
+    a: "All pharmacies on PharmaCycle.AI are verified through official PCN license checks. Look for the green verified badge on pharmacy profiles.",
   },
   {
     q: "Can I track transfer deliveries?",

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import TopBar from "@/components/layout/TopBar";
 import StatCard from "@/components/ui/StatCard";
-import DonutChart from "@/components/ui/DonutChart";
 import AppIcon from "@/components/ui/AppIcon";
 import { analyticsApi } from "@/lib/api";
 import { CATEGORY_COLORS } from "@/lib/format";
@@ -43,23 +42,43 @@ export default function AnalysisPage() {
               <StatCard icon={<AppIcon name="warning" size={20} className="text-white" />} iconBg="bg-purple-500"
                 title="At-Risk Units" value={String(data?.atRiskUnits || 0)} subtitle="Near expiry / expired" />
               <StatCard icon={<AppIcon name="users" size={20} className="text-white" />} iconBg="bg-orange-500"
-                title="Partner Pharmacies" value={String(data?.partnerPharmacies || 0)} />
+                title="Available Pharmacies" value={String(data?.partnerPharmacies || 0)} subtitle="Active Network" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white rounded-xl border border-gray-100 p-5">
                 <h3 className="text-base font-semibold text-gray-900 mb-4">Inventory by Category</h3>
                 {categorySegments.length > 0 ? (
-                  <div className="flex items-center gap-6">
-                    <DonutChart segments={categorySegments} total={total} centerLabel="Total Items" size={150} />
-                    <div className="space-y-2.5 flex-1">
-                      {categorySegments.map((seg) => (
-                        <div key={seg.label} className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: seg.color }} />
-                          <span className="text-xs text-gray-600 capitalize">{seg.label}</span>
-                          <span className="text-xs font-semibold text-gray-900 ml-auto">{seg.value}</span>
-                        </div>
-                      ))}
+                  <div className="space-y-4">
+                    <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden flex">
+                      {categorySegments.map((seg) => {
+                        const pct = total > 0 ? (seg.value / total) * 100 : 0;
+                        if (pct <= 0) return null;
+                        return (
+                          <div
+                            key={seg.label}
+                            className="h-full transition-all"
+                            style={{ width: `${pct}%`, backgroundColor: seg.color }}
+                            title={`${seg.label}: ${seg.value} (${pct.toFixed(1)}%)`}
+                          />
+                        );
+                      })}
+                    </div>
+                    <div className="space-y-2.5">
+                      {categorySegments.map((seg) => {
+                        const pct = total > 0 ? ((seg.value / total) * 100).toFixed(1) : "0";
+                        return (
+                          <div key={seg.label} className="flex items-center justify-between text-xs p-2 rounded-lg bg-gray-50 border border-gray-100">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: seg.color }} />
+                              <span className="text-gray-600 capitalize truncate">{seg.label}</span>
+                            </div>
+                            <span className="font-semibold text-gray-900 ml-2">
+                              {seg.value} <span className="text-[10px] font-normal text-gray-400">({pct}%)</span>
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 ) : (

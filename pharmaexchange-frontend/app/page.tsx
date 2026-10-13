@@ -132,7 +132,7 @@ export default function LandingPage() {
                     size={14}
                     className="text-green-600 shrink-0"
                   />{" "}
-                  Verified Certified Partners Only
+                  Verified Licensed Pharmacies Only
                 </li>
                 <li className="flex items-center gap-2">
                   <AppIcon

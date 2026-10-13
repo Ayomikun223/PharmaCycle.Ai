@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import TopBar from "@/components/layout/TopBar";
 import Badge from "@/components/ui/Badge";
 import AppIcon from "@/components/ui/AppIcon";
@@ -112,43 +113,39 @@ export default function TransfersPage() {
     );
     if (!selectedItem) {
       toastError("Please select an eligible inventory item.");
-      return;
-    }
-
-    if (isExpiredInventoryItem(selectedItem)) {
+    } else if (isExpiredInventoryItem(selectedItem)) {
       toastError("Expired items cannot be listed for transfer.");
-      return;
-    }
+    } else {
+      const qty = Number(offerForm.quantity);
+      if (!qty || qty < 1 || qty > selectedItem.quantity) {
+        toastError(
+          `Please enter a quantity between 1 and ${selectedItem.quantity}`,
+        );
+        return;
+      }
 
-    const qty = Number(offerForm.quantity);
-    if (!qty || qty < 1 || qty > selectedItem.quantity) {
-      toastError(
-        `Please enter a quantity between 1 and ${selectedItem.quantity}`,
-      );
-      return;
-    }
-
-    setOfferSaving(true);
-    try {
-      await transfersApi.createListing(
-        offerForm.inventoryItemId,
-        qty,
-        Number(offerForm.discountPercent),
-      );
-      setShowOffer(false);
-      setOfferForm({
-        inventoryItemId: "",
-        quantity: "",
-        discountPercent: "10",
-      });
-      toastSuccess("Medicine listed for transfer!");
-      load();
-    } catch (err) {
-      toastError(
-        err instanceof Error ? err.message : "Failed to create listing",
-      );
-    } finally {
-      setOfferSaving(false);
+      setOfferSaving(true);
+      try {
+        await transfersApi.createListing(
+          offerForm.inventoryItemId,
+          qty,
+          Number(offerForm.discountPercent),
+        );
+        setShowOffer(false);
+        setOfferForm({
+          inventoryItemId: "",
+          quantity: "",
+          discountPercent: "10",
+        });
+        toastSuccess("Medicine listed for transfer!");
+        load();
+      } catch (err) {
+        toastError(
+          err instanceof Error ? err.message : "Failed to create listing",
+        );
+      } finally {
+        setOfferSaving(false);
+      }
     }
   }
 
@@ -160,34 +157,47 @@ export default function TransfersPage() {
       />
       <main className="flex-1 overflow-y-auto p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl border border-gray-100 p-5">
-            <AppIcon name="search" size={20} className="text-green-600 mb-3" />
-            <h3 className="font-bold text-gray-900 mb-1">Find Medicines</h3>
-            <p className="text-xs text-gray-500 mb-4">
-              Search available transfer listings from partner pharmacies.
-            </p>
+          <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col justify-between h-full">
+            <div>
+              <AppIcon name="search" size={20} className="text-green-600 mb-3" />
+              <h3 className="font-bold text-gray-900 mb-1">Find Medicines</h3>
+              <p className="text-xs text-gray-500 mb-4">
+                Search available transfer listings from active pharmacies.
+              </p>
+            </div>
             <button
               onClick={load}
-              className="w-full py-2 bg-green-600 text-white rounded-lg text-xs font-semibold cursor-pointer">
-              Refresh Listings →
+              disabled={loading}
+              className="w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold cursor-pointer transition-colors disabled:opacity-60 flex items-center justify-center gap-1.5">
+              <AppIcon name="search" size={14} />
+              {loading ? "Finding Listings..." : "Find Listings →"}
             </button>
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-5">
-            <AppIcon name="send" size={20} className="text-blue-600 mb-3" />
-            <h3 className="font-bold text-gray-900 mb-1">Request Transfer</h3>
-            <p className="text-xs text-gray-500 mb-4">
-              Click &quot;Request&quot; on any listing below.
-            </p>
+          <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col justify-between h-full">
+            <div>
+              <AppIcon name="send" size={20} className="text-blue-600 mb-3" />
+              <h3 className="font-bold text-gray-900 mb-1">Request Transfer</h3>
+              <p className="text-xs text-gray-500 mb-4">
+                Select any medicine listing below or track current active transfers.
+              </p>
+            </div>
+            <Link
+              href="/transfer-requests"
+              className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold cursor-pointer text-center block transition-colors">
+              View Transfer Requests →
+            </Link>
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-5">
-            <AppIcon name="price" size={20} className="text-purple-600 mb-3" />
-            <h3 className="font-bold text-gray-900 mb-1">Offer Medicines</h3>
-            <p className="text-xs text-gray-500 mb-4">
-              List your excess or near-expiry stock.
-            </p>
+          <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col justify-between h-full">
+            <div>
+              <AppIcon name="price" size={20} className="text-purple-600 mb-3" />
+              <h3 className="font-bold text-gray-900 mb-1">Offer Medicines</h3>
+              <p className="text-xs text-gray-500 mb-4">
+                List your excess or near-expiry stock for other pharmacies.
+              </p>
+            </div>
             <button
               onClick={openOfferModal}
-              className="w-full py-2 bg-purple-600 text-white rounded-lg text-xs font-semibold cursor-pointer">
+              className="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-semibold cursor-pointer transition-colors">
               Offer Now →
             </button>
           </div>
@@ -210,8 +220,9 @@ export default function TransfersPage() {
             </div>
             <button
               onClick={load}
-              className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs cursor-pointer">
-              Search
+              disabled={loading}
+              className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs cursor-pointer font-medium transition-colors">
+              {loading ? "Searching..." : "Search"}
             </button>
           </div>
 
@@ -226,40 +237,50 @@ export default function TransfersPage() {
               {listings.map((med) => (
                 <div
                   key={med.listingId}
-                  className="flex flex-wrap items-center gap-4 p-4 border border-gray-100 rounded-xl hover:bg-gray-50">
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors">
                   <div className="flex-1 min-w-[200px]">
-                    <h4 className="text-sm font-semibold text-gray-900">
-                      {med.medicineName} {med.strength}
-                    </h4>
-                    <p className="text-xs text-gray-400">
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-sm font-semibold text-gray-900">
+                        {med.medicineName} {med.strength}
+                      </h4>
+                      <Badge variant="excess-stock">Available</Badge>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-0.5">
                       {med.dosageForm} · {med.fromPharmacy.name},{" "}
                       {med.fromPharmacy.city}
                     </p>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-gray-500 mt-1 font-medium">
                       {med.quantity} units available
                     </div>
                   </div>
-                  <div className="text-right min-w-[120px]">
-                    <div className="text-sm font-semibold text-gray-900">
-                      {formatNaira(med.discountedPrice)} each
-                    </div>
-                    {med.discountPercent > 0 ? (
-                      <div className="text-xs text-gray-400">
-                        Original {formatNaira(med.originalPrice)}
+                  <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0">
+                    <div className="text-left sm:text-right">
+                      <div className="text-sm font-semibold text-gray-900">
+                        {formatNaira(med.discountedPrice)}{" "}
+                        <span className="text-xs font-normal text-gray-500">
+                          each
+                        </span>
                       </div>
-                    ) : (
-                      <div className="text-xs text-gray-400">No discount</div>
-                    )}
+                      {med.discountPercent > 0 ? (
+                        <div className="text-xs text-green-600 font-medium">
+                          Save {med.discountPercent}% (was{" "}
+                          {formatNaira(med.originalPrice)})
+                        </div>
+                      ) : (
+                        <div className="text-xs text-gray-400">
+                          Standard price
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => openRequestModal(med)}
+                      disabled={requesting === med.listingId}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold cursor-pointer disabled:opacity-50 min-w-[130px] text-center transition-colors shadow-sm">
+                      {requesting === med.listingId
+                        ? "Sending..."
+                        : "Request Transfer"}
+                    </button>
                   </div>
-                  <Badge variant="excess-stock">Available</Badge>
-                  <button
-                    onClick={() => openRequestModal(med)}
-                    disabled={requesting === med.listingId}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg text-xs font-semibold cursor-pointer disabled:opacity-50">
-                    {requesting === med.listingId
-                      ? "Sending..."
-                      : "Request Transfer"}
-                  </button>
                 </div>
               ))}
             </div>

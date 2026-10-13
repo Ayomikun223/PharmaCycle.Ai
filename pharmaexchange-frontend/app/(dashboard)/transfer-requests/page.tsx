@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import TopBar from "@/components/layout/TopBar";
 import StatCard from "@/components/ui/StatCard";
 import Badge from "@/components/ui/Badge";
-import DonutChart from "@/components/ui/DonutChart";
 import AppIcon from "@/components/ui/AppIcon";
 import { useToast } from "@/contexts/ToastContext";
 import { transferRequestsApi, type TransferRequest } from "@/lib/api";
@@ -224,23 +223,39 @@ export default function TransferRequestsPage() {
             <h3 className="text-base font-semibold text-gray-900 mb-4">
               Request Summary
             </h3>
-            <DonutChart
-              segments={segments}
-              total={summary.total || 1}
-              centerLabel="Total"
-              size={130}
-            />
-            <div className="space-y-2 mt-4">
-              {segments.map((s) => (
-                <div key={s.label} className="flex items-center gap-2 text-xs">
-                  <span
-                    className="w-2.5 h-2.5 rounded-full"
-                    style={{ background: s.color }}
+            {/* Segmented bar */}
+            <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden flex mb-4">
+              {segments.map((s) => {
+                const pct = summary.total > 0 ? (s.value / summary.total) * 100 : 0;
+                if (pct <= 0) return null;
+                return (
+                  <div
+                    key={s.label}
+                    className="h-full transition-all"
+                    style={{ width: `${pct}%`, backgroundColor: s.color }}
+                    title={`${s.label}: ${s.value} (${pct.toFixed(0)}%)`}
                   />
-                  <span className="text-gray-600">{s.label}</span>
-                  <span className="ml-auto font-semibold">{s.value}</span>
-                </div>
-              ))}
+                );
+              })}
+            </div>
+            <div className="space-y-2.5">
+              {segments.map((s) => {
+                const pct = summary.total > 0 ? ((s.value / summary.total) * 100).toFixed(0) : "0";
+                return (
+                  <div key={s.label} className="flex items-center justify-between text-xs p-2 rounded-lg bg-gray-50 border border-gray-100">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        style={{ background: s.color }}
+                      />
+                      <span className="text-gray-600 truncate">{s.label}</span>
+                    </div>
+                    <span className="font-semibold text-gray-900 ml-2">
+                      {s.value} <span className="text-[10px] font-normal text-gray-400">({pct}%)</span>
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
