@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import Sidebar from "@/components/layout/Sidebar";
 import AuthGuard from "@/components/auth/AuthGuard";
-import AppIcon from "@/components/ui/AppIcon";
-import { LogoIcon } from "@/components/ui/AppIcon";
+import AppIcon, { LogoIcon } from "@/components/ui/AppIcon";
+import { alertsApi } from "@/lib/api";
 
 export default function DashboardLayout({
   children,
@@ -12,6 +13,16 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    alertsApi
+      .list(false)
+      .then((res) => {
+        setUnreadCount(res.alerts.filter((a) => !a.read).length);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <AuthGuard>
@@ -50,8 +61,19 @@ export default function DashboardLayout({
                 PharmaCycle.AI
               </span>
             </div>
-            {/* Spacer to keep logo centered */}
-            <div className="w-9" />
+            {/* Mobile notification bell */}
+            <Link
+              href="/alerts"
+              title="Notifications"
+              className="relative p-2 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer"
+            >
+              <AppIcon name="bell" size={20} />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 min-w-[16px] h-[16px] px-0.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-sm">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </Link>
           </div>
 
           <div className="flex-1 overflow-y-auto">{children}</div>

@@ -66,7 +66,7 @@ export default function ReportsPage() {
               <StatCard icon={<AppIcon name="package" size={20} className="text-white" />} iconBg="bg-green-500" title="Total Inventory" value={stats.total.toLocaleString()} />
               <StatCard icon={<AppIcon name="warning" size={20} className="text-white" />} iconBg="bg-orange-500" title="Near Expiry" value={String(stats.nearExpiry)} />
               <StatCard icon={<AppIcon name="transfers" size={20} className="text-white" />} iconBg="bg-blue-500" title="Completed Transfers" value={String(stats.completed)} />
-              <StatCard icon={<AppIcon name="users" size={20} className="text-white" />} iconBg="bg-purple-500" title="Partner Pharmacies" value={String(stats.partners)} />
+              <StatCard icon={<AppIcon name="users" size={20} className="text-white" />} iconBg="bg-purple-500" title="Available Pharmacies" value={String(stats.partners)} />
             </div>
 
             <div className="bg-white rounded-xl border border-gray-100 p-5">

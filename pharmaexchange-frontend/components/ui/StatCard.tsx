@@ -21,17 +21,6 @@ export default function StatCard({ icon, iconBg, title, value, subtitle, trend, 
         {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
         {trend && <p className={`text-xs font-medium mt-1 ${trendColor}`}>{trend}</p>}
       </div>
-      {/* Mini sparkline */}
-      <svg width="48" height="24" viewBox="0 0 48 24" className="shrink-0 mt-2">
-        <polyline
-          fill="none"
-          stroke={trendColor === "text-red-500" ? "#ef4444" : "#22c55e"}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          points="2,18 8,14 16,16 24,8 32,12 40,6 46,10"
-        />
-      </svg>
     </div>
   );
 }

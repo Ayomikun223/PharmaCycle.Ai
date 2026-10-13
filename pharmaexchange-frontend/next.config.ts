@@ -6,8 +6,8 @@ const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
   turbopack: {
-    root: projectRoot,
+    root: path.resolve(projectRoot, ".."),
   },
-};  // go
+};
 
 export default nextConfig;

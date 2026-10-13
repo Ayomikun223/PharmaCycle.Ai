@@ -51,6 +51,7 @@ export type AppIconName =
   | "transfers"
   | "requests"
   | "alerts"
+  | "bell"
   | "scan"
   | "analysis"
   | "reports"
@@ -63,6 +64,7 @@ export type AppIconName =
   | "lowStock"
   | "transfer"
   | "price"
+  | "naira"
   | "search"
   | "camera"
   | "clipboard"
@@ -89,13 +91,14 @@ export type AppIconName =
   | "filter"
   | "users";
 
-const iconMap: Record<AppIconName, IconSvgElement> = {
+const iconMap: Record<Exclude<AppIconName, "price" | "naira">, IconSvgElement> = {
   dashboard: DashboardSquare01Icon,
   inventory: Package01Icon,
   insights: AiIdeaIcon,
   transfers: ArrowLeftRightIcon,
   requests: SentIcon,
   alerts: Notification01Icon,
+  bell: Notification01Icon,
   scan: BarcodeScanIcon,
   analysis: ChartIcon,
   reports: File01Icon,
@@ -107,7 +110,6 @@ const iconMap: Record<AppIconName, IconSvgElement> = {
   expiry: AlertCircleIcon,
   lowStock: ChartDecreaseIcon,
   transfer: ArrowDataTransferHorizontalIcon,
-  price: Dollar01Icon,
   search: Search01Icon,
   camera: Camera01Icon,
   clipboard: ClipboardIcon,
@@ -145,12 +147,42 @@ type AppIconProps = IconProps & {
   name: AppIconName;
 };
 
+export function NairaIcon({ size = 20, className = "", strokeWidth = 1.75 }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M6 19V5l12 14V5" />
+      <line x1="4" y1="10" x2="20" y2="10" />
+      <line x1="4" y1="14" x2="20" y2="14" />
+    </svg>
+  );
+}
+
 export default function AppIcon({
   name,
   size = 20,
   className = "",
   strokeWidth = 1.75,
 }: AppIconProps) {
+  if (name === "price" || name === "naira") {
+    return (
+      <NairaIcon
+        size={size}
+        className={className}
+        strokeWidth={strokeWidth}
+      />
+    );
+  }
+
   return (
     <HugeiconsIcon
       icon={iconMap[name]}
