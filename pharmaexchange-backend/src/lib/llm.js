@@ -24,7 +24,7 @@ async function callLLM({ systemPrompt, userPrompt }) {
       Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
     },
     body: JSON.stringify({
-      model: process.env.LLM_MODEL || 'llama-3.3-70b-versatile',
+      model: process.env.LLM_MODEL || 'openai/gpt-oss-120b',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },

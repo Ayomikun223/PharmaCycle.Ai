@@ -121,10 +121,22 @@ export default function DashboardPage() {
             title="Near Expiry Items" value={String(summary.nearExpiryItems)} trend="View all" trendColor="text-orange-500" />
           <StatCard icon={<AppIcon name="transfers" size={20} className="text-white" />} iconBg="bg-blue-500"
             title="Active Transfers" value={String(summary.activeTransfers)} trend="View all" trendColor="text-blue-500" />
-          <Link href="/pharmacies" className="block">
-            <StatCard icon={<AppIcon name="users" size={20} className="text-white" />} iconBg="bg-purple-500"
-              title="Available Pharmacies" value={String(summary.partnerPharmacies)} subtitle="Active Network" trend="View all" trendColor="text-purple-500" />
-          </Link>
+
+          <Link
+  href="/pharmacies"
+  className="block rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+  aria-label="View all partner pharmacies"
+>
+  <StatCard
+    icon={<AppIcon name="users" size={20} className="text-white" />}
+    iconBg="bg-purple-500"
+    title="Available Pharmacies"
+    value={String(summary.partnerPharmacies)}
+    subtitle="Active Network"
+    trend="View all"
+    trendColor="text-purple-500"
+  />
+</Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
