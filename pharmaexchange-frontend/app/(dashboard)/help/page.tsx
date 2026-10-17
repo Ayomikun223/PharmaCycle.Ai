@@ -28,7 +28,7 @@ const contactOptions = [
   {
     icon: "send" as const,
     title: "Email Support",
-    desc: "support@PharmaCycle.AI.ng",
+    desc: "pharmacycleai@gmail.com",
     action: "Send Email",
   },
   {
