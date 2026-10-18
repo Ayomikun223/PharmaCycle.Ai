@@ -10,7 +10,7 @@ cloudinary.config({
 // Store file in memory, then stream buffer to Cloudinary (no temp files on disk)
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+  limits: { fileSize: 4 * 1024 * 1024 }, // 4MB max (Vercel caps request bodies at ~4.5MB)
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) cb(null, true);
     else cb(new Error('Only image files are allowed'));

@@ -7,7 +7,7 @@ import Badge from "@/components/ui/Badge";
 import { useToast } from "@/contexts/ToastContext";
 import { ApiError, inventoryApi, type InventoryItem } from "@/lib/api";
 import { formatDate, inventoryStatusToBadge } from "@/lib/format";
-import { fileToDataUrl, ocrWithTesseract, sanitizeParsed, type ParsedLabel } from "@/lib/ocr";
+import { downscaleImage, fileToDataUrl, ocrWithTesseract, sanitizeParsed, type ParsedLabel } from "@/lib/ocr";
 
 const emptyForm = {
   medicineName: "",
@@ -298,12 +298,13 @@ export default function ScanPage() {
     setForm(emptyForm);
 
     try {
-      const dataUrl = await fileToDataUrl(file);
+      const small = await downscaleImage(file);
+      const dataUrl = await fileToDataUrl(small);
       let parsed: ParsedLabel | null = null;
 
       // 1) Gemini first
       try {
-        const res = await inventoryApi.ocrLabel(dataUrl, file.type || "image/jpeg");
+        const res = await inventoryApi.ocrLabel(dataUrl, small.type || "image/jpeg");
         parsed = sanitizeParsed(res.extracted as ParsedLabel);
         if (parsed.medicineName || parsed.batchNumber) {
           setForm(applyToForm(parsed));
@@ -312,7 +313,7 @@ export default function ScanPage() {
           return;
         }
       } catch (e) {
-        if (!(e instanceof ApiError && (e.status === 503 || e.status === 502))) throw e;
+        if (!(e instanceof ApiError && [413, 502, 503].includes(e.status))) throw e;
       }
 
       // 2) Tesseract fallback
