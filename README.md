@@ -84,7 +84,7 @@ By facilitating the secure exchange and redistribution of near-expiry inventory,
 4. Run migrations and seed data:
    ```bash
    npx prisma migrate dev
-   npx prisma db seed
+   npx prisma db seed   # or: npm run seed
    ```
 5. Start backend:
    ```bash
@@ -119,6 +119,59 @@ You can also run both projects directly from the workspace root:
 - Install all: `npm run install:all`
 - Start frontend: `npm run dev:frontend`
 - Start backend: `npm run dev:backend`
+
+---
+
+## ▲ Deploying to Vercel
+
+Deploy the repo as **two Vercel projects** from the same Git repository:
+
+| Project  | Root Directory            | Framework preset |
+| -------- | ------------------------- | ---------------- |
+| Backend  | `pharmaexchange-backend`  | Express (auto-detected from `src/server.js`) |
+| Frontend | `pharmaexchange-frontend` | Next.js          |
+
+Deploy the backend first so you have its URL for the frontend.
+
+### Backend environment variables
+
+| Variable | Required | Notes |
+| -------- | -------- | ----- |
+| `DATABASE_URL` | ✅ | Use Neon's **pooled** connection string (host contains `-pooler`). |
+| `JWT_SECRET` | ✅ | Long random string. |
+| `CLIENT_URL` | ✅ | Frontend URL(s), comma-separated, no trailing slash. |
+| `CLIENT_URL_PATTERN` | optional | Regex for preview URLs, e.g. `^https://pharmacycle-.*\.vercel\.app$`. |
+| `CRON_SECRET` | ✅ | Random string; Vercel Cron sends it to `/cron/expiry-check`. |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | ✅ | Image uploads. |
+| `GEMINI_API_KEY` | optional | Server-side OCR; the browser falls back to Tesseract without it. |
+| `GROQ_API_KEY` | ✅ for AI Insights | `LLM_MODEL` optionally overrides the model. |
+| `RESEND_API_KEY`, `EMAIL_FROM` | optional | `EMAIL_FROM` must be on a domain verified in Resend. |
+| `JWT_EXPIRES_IN` | optional | Defaults to `7d`. |
+
+### Frontend environment variables
+
+| Variable | Notes |
+| -------- | ----- |
+| `NEXT_PUBLIC_API_URL` | Backend URL, no trailing slash. Inlined at build time, so set it for Production **and** Preview, and redeploy after changing it. |
+
+### Database migrations
+
+Migrations live in `pharmaexchange-backend/prisma/migrations`. Apply them to the production database from your machine:
+
+```bash
+cd pharmaexchange-backend
+DATABASE_URL="<neon direct (non-pooler) url>" npx prisma migrate deploy
+```
+
+If the database was created earlier with `prisma db push` and already has the tables, mark the baseline as applied instead:
+
+```bash
+npx prisma migrate resolve --applied 0_init
+```
+
+### Scheduled jobs
+
+Locally, `node-cron` runs the expiry check daily. On Vercel, `pharmaexchange-backend/vercel.json` registers a daily Vercel Cron (01:00 UTC) that calls `GET /cron/expiry-check` with `CRON_SECRET`. Request bodies on Vercel are capped at ~4.5 MB, so the API accepts up to 4 MB, and the scan page downscales photos before sending them.
 
 ---
 

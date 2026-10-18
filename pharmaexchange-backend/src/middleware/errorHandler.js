@@ -11,6 +11,11 @@ function errorHandler(err, req, res, next) {
     return res.status(404).json({ error: 'Record not found' });
   }
 
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    // Multer upload over the size limit in lib/cloudinary.js
+    return res.status(413).json({ error: 'Image is too large (max 4 MB)' });
+  }
+
   // Neon serverless cold-start / connection drop — return 503 instead of crashing
   if (
     err.name === 'PrismaClientInitializationError' ||
